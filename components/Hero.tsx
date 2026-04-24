@@ -42,6 +42,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
+      className="mobile-hero-padding"
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -69,6 +70,7 @@ export default function Hero() {
                   delay: 0.22 + li * 0.22,
                   ease: [0.22, 1, 0.36, 1],
                 }}
+                className="mobile-hero-text"
                 style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontSize: 'clamp(64px, 9.5vw, 148px)',
@@ -87,6 +89,7 @@ export default function Hero() {
 
         {/* Role row */}
         <motion.div
+          className="mobile-flex-wrap mobile-gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={ready ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.74, ease: [0.22, 1, 0.36, 1] }}
@@ -110,6 +113,7 @@ export default function Hero() {
 
       {/* Scroll hint */}
       <motion.div
+        className="mobile-hide"
         initial={{ opacity: 0, y: 10 }}
         animate={ready ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}

@@ -43,6 +43,7 @@ export default function Nav() {
 
   return (
     <motion.header
+      className="mobile-nav-padding"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -55,7 +56,7 @@ export default function Nav() {
         transition: 'background 380ms ease, backdrop-filter 380ms ease, border-color 380ms ease',
       }}
     >
-      <nav style={{ display: 'flex', alignItems: 'center', gap: 44 }}>
+      <nav className="mobile-nav-gap" style={{ display: 'flex', alignItems: 'center', gap: 44 }}>
         {LINKS.map(label => (
           <NavLink
             key={label}

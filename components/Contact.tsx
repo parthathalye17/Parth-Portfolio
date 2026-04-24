@@ -14,6 +14,7 @@ export default function Contact() {
   return (
     <footer
       id="contact"
+      className="mobile-section-padding"
       style={{ background: '#303030', padding: '80px 52px 56px' }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -26,7 +27,7 @@ export default function Contact() {
             Get in Touch
           </span>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 24 }}>
-            <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 'clamp(28px,4vw,58px)', fontWeight: 700, letterSpacing: '-0.025em', color: 'rgba(255,255,255,0.82)', lineHeight: 1 }}>
+            <h2 className="mobile-title-text" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 'clamp(28px,4vw,58px)', fontWeight: 700, letterSpacing: '-0.025em', color: 'rgba(255,255,255,0.82)', lineHeight: 1 }}>
               Let&apos;s build something.
             </h2>
             <SendButton />
@@ -37,6 +38,7 @@ export default function Contact() {
         <motion.div
           variants={FADE_UP} initial="hidden" whileInView="show" viewport={VIEWPORT}
           transition={{ delay: 0.11 }}
+          className="mobile-contact-grid mobile-grid-1"
           style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 32, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}
         >
           {CONTACT_FIELDS.map((f, i) => {
@@ -126,6 +128,7 @@ function FieldInner({ label, value, accent, isRight, hasLink }: {
   const [hov, setHov] = useState(false);
   return (
     <div
+      className={isRight ? 'mobile-contact-right-col' : 'mobile-contact-left-col'}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{

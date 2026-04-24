@@ -14,6 +14,7 @@ export default function Projects() {
     <>
       <section
         id="projects"
+        className="mobile-section-padding"
         style={{ background: '#000', padding: '104px 52px 112px', borderTop: '1px solid rgba(255,255,255,0.06)' }}
       >
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -87,7 +88,7 @@ function ProjectRow({ p, onPlay }: { p: Project; onPlay: () => void }) {
       }}
     >
       {/* Header — same 1fr/auto grid as Experience */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'start' }}>
+      <div className="mobile-project-header" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'start' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
             <span style={{
@@ -133,7 +134,7 @@ function ProjectRow({ p, onPlay }: { p: Project; onPlay: () => void }) {
             transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
             style={{ overflow: 'hidden' }}
           >
-            <div style={{
+            <div className="mobile-project-expanded" style={{
               marginTop: 24,
               display: 'grid',
               gridTemplateColumns: '1fr 280px',

@@ -8,7 +8,7 @@ const VIEWPORT = { once: true, amount: 0.1 };
 
 export default function Experience() {
   return (
-    <section id="experience" style={{ background: '#fff', padding: '104px 52px 112px' }}>
+    <section id="experience" className="mobile-section-padding" style={{ background: '#fff', padding: '104px 52px 112px' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <motion.span
           initial={{ opacity: 0, y: 20 }}
@@ -69,7 +69,7 @@ function ExpRow({ e }: { e: typeof EXPERIENCE[number] }) {
         }}
       >
         {/* Header row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'start' }}>
+        <div className="mobile-exp-header" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'start' }}>
           <div>
             {/* Company + role */}
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', marginBottom: 5 }}>
@@ -135,7 +135,7 @@ function ExpRow({ e }: { e: typeof EXPERIENCE[number] }) {
           </div>
 
           {/* Period + location */}
-          <div style={{ textAlign: 'right', paddingTop: 2, flexShrink: 0 }}>
+          <div className="mobile-exp-align-left" style={{ textAlign: 'right', paddingTop: 2, flexShrink: 0 }}>
             <div
               style={{
                 fontFamily: "'DM Mono', monospace",

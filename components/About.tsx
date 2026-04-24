@@ -16,6 +16,7 @@ export default function About() {
   return (
     <section
       id="about"
+      className="mobile-section-padding"
       style={{ background: '#000', padding: '104px 52px 112px' }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -26,7 +27,7 @@ export default function About() {
           About
         </motion.span>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '6fr 5fr', gap: 80, alignItems: 'start' }}>
+        <div className="mobile-grid-1 mobile-gap-8" style={{ display: 'grid', gridTemplateColumns: '6fr 5fr', gap: 80, alignItems: 'start' }}>
           {/* Left — bio */}
           <div>
             <motion.p
