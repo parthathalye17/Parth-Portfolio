@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Dot: 5px  Ring: 26px (hover: 40px) — mix-blend-mode:difference auto-inverts on white sections
 export default function Cursor() {
@@ -9,11 +9,17 @@ export default function Cursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const ring = useRef({ x: 0, y: 0 });
   const raf = useRef<number>(0);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Hide cursor on touch-only devices
+    if (window.matchMedia('(hover: none)').matches) return;
+
     const dot = dotRef.current;
     const ringEl = ringRef.current;
     if (!dot || !ringEl) return;
+
+    setVisible(true);
 
     const onMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
@@ -61,6 +67,8 @@ export default function Cursor() {
       cancelAnimationFrame(raf.current);
     };
   }, []);
+
+  if (!visible) return null;
 
   return (
     <>

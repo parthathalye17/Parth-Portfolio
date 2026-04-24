@@ -40,8 +40,15 @@ body {
   color: var(--f-white);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  /* custom cursor */
+  /* custom cursor — only on pointer devices */
   cursor: none;
+}
+
+/* restore default cursor on touch-only devices */
+@media (hover: none) {
+  body { cursor: auto; }
+  button { cursor: pointer; }
+  a { cursor: pointer; }
 }
 
 a {
