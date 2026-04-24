@@ -62,7 +62,7 @@ export const EXPERIENCE: Experience[] = [
     discipline: 'Full-Stack · Computer Vision · ML (YOLO)',
     period: 'Feb 2026 – Present',
     loc: 'Sydney, AU',
-    desc: 'Fine-tuned a YOLO Safety Zone model across 6 vehicle classes, lifting worker proximity detection accuracy by 38% and cutting false alerts by 45% in live industrial environments. Simultaneously replaced a manual SharePoint-to-spreadsheet workflow across waste management facilities with a Next.js + FastAPI platform — eliminating ~4 hrs/day of operator entry, reducing misclassification risk by 60%, and automating revenue calculation across 100+ daily truck events through a verified-record pipeline.',
+    desc: 'Built a single-camera CCTV analytics system for a container-deposit recycling store using YOLO-based person detection and BoT-SORT tracking (with ReID), generating queue wait times and per-machine dwell metrics (avg/max/min) through zone-based tracking — enabling data-driven decisions on store layout and throughput. Improved worker proximity detection accuracy by 38% and reduced false alerts by 45% by fine-tuning a YOLO Safety Zone model across 6 vehicle classes. Replaced a manual SharePoint-to-spreadsheet workflow with a Next.js + FastAPI platform, eliminating ~4 hrs/day of manual entry, reducing misclassification risk by 60%, and automating revenue calculations across 100+ daily truck events via a verified data pipeline.',
   },
   {
     co: 'Deloitte',
