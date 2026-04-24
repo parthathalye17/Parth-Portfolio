@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parth Athalye</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<style>
+:root {
+  --f-black:#000;--f-ds:#303030;--f-white:#fff;--f-nb:#181818;
+  --f-gd:#666;--f-gm:#8f8f8f;--f-gl:#d2d2d2;--f-border:#ccc;
+  --f-red:#DA291C;--f-red-d:#B01E0A;
+  --ff-d:'Barlow Condensed',sans-serif;
+  --ff-b:'Barlow',sans-serif;
+  --ff-m:'DM Mono',monospace;
+  --r:2px;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--f-black);color:#fff;font-family:var(--ff-b);-webkit-font-smoothing:antialiased;overflow-x:hidden;cursor:none}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--ff-b);border:none;background:none;padding:0;cursor:none}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:#333}
+
+/* Cursor — mix-blend-mode:difference makes it auto-invert on white sections */
+#cd{position:fixed;width:7px;height:7px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference}
+#cr{position:fixed;width:34px;height:34px;border:1.5px solid #fff;border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width 300ms,height 300ms}
+body.ch #cr{width:50px;height:50px}
+
+/* Scroll reveal */
+.rv{opacity:0;transform:perspective(900px) translateY(32px) rotateX(4deg);transition:opacity 850ms var(--ease),transform 850ms var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:110ms}.rv.d2{transition-delay:220ms}.rv.d3{transition-delay:330ms}.rv.d4{transition-delay:440ms}
+
+/* Noise overlay */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+@keyframes letterIn{0%{opacity:0;transform:rotateX(-90deg) translateZ(-20px);filter:blur(3px)}55%{filter:blur(0)}100%{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes lineDrop{from{transform:scaleY(0);transform-origin:top}to{transform:scaleY(1)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes modalIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+
+/* Video modal */
+#vmodal{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0.92);align-items:center;justify-content:center}
+#vmodal.open{display:flex}
+#vmodal-inner{position:relative;width:min(900px,92vw);animation:modalIn 280ms var(--ease) both}
+#vmodal-close{position:absolute;top:-38px;right:0;font-family:var(--ff-m);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.45);background:none;border:none;cursor:pointer;cursor:none}
+#vmodal iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:2px}
+</style>
+</head>
+<body>
+<div id="cd"></div>
+<div id="cr"></div>
+<div id="root"></div>
+
+<!-- Video modal -->
+<div id="vmodal">
+  <div id="vmodal-inner">
+    <button id="vmodal-close" onclick="closeVideo()">Close ✕</button>
+    <iframe id="vmodal-frame" allowfullscreen allow="autoplay"></iframe>
+  </div>
+</div>
+
+<script>
+var cd=document.getElementById('cd'),cr=document.getElementById('cr');
+var mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cd.style.left=mx+'px';cd.style.top=my+'px'},{passive:true});
+(function t(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(t)})();
+function setupH(){document.querySelectorAll('[data-h]').forEach(function(el){el.addEventListener('mouseenter',function(){document.body.classList.add('ch');});el.addEventListener('mouseleave',function(){document.body.classList.remove('ch');});})}
+var sio=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in')});},{threshold:0.07});
+function initR(){document.querySelectorAll('.rv:not(.in)').forEach(function(el){sio.observe(el)})}
+setTimeout(function(){initR();setupH()},250);
+new MutationObserver(function(){initR();setupH()}).observe(document.body,{childList:true,subtree:true});
+
+function openVideo(ytId){
+  var m=document.getElementById('vmodal');
+  document.getElementById('vmodal-frame').src='https://www.youtube.com/embed/'+ytId+'?autoplay=1';
+  m.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeVideo(){
+  document.getElementById('vmodal').classList.remove('open');
+  document.getElementById('vmodal-frame').src='';
+  document.body.style.overflow='';
+}
+document.getElementById('vmodal').addEventListener('click',function(e){if(e.target===this)closeVideo();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeVideo();});
+</script>
+
+<script type="text/babel">
+const {useState,useEffect,useRef}=React;
+
+/* ── DATA ── */
+const PROJECTS=[
+  {n:'01',title:'TEACHMAP',sub:'AI Curriculum Platform · Cambridge EduX × Microsoft',year:'2026',
+   ytId:'71IxVj20-i0',
+   stack:['FastAPI','Next.JS','Supabase','Gemini API','Mapbox'],
+   desc:'Full-stack AI platform enabling professors to benchmark curricula live against peer institutions, auto-generate post-lecture quizzes, and close feedback loops between student confusion and next-lecture content. Built at Cambridge EduX Hackathon at Microsoft Sydney HQ — reduced curriculum build time by 97% (68 hrs → 2 hrs) and quiz generation by 120×. Feedback-loop architecture mirrors ASU and U of T pilots demonstrating 19% → 8% dropout reduction and +13pp exam improvement, targeting 242M students across 27,400 institutions.',
+   link:'https://github.com/sirasatinithyanand/TechMap--The-teachers-ai-guide'},
+  {n:'02',title:'LEGION',sub:'Lead Generation Platform',year:'2024',
+   ytId:'RyBxjDp6300',
+   stack:['LangGraph','Gemini','Serper','FastAPI','NextJS'],
+   desc:'Multi-agent AI pipeline that eliminates B2B prospecting overhead — from hours of manual research to under 3 minutes per run. Autonomously discovers, scores, and follows up with qualified leads, replacing manual LinkedIn search, email drafting, and CRM entry entirely.',
+   link:'https://github.com/parthathalye17/Lead-Generation-Platform'},
+  {n:'03',title:'HISAAB-BOOK',sub:'Multilingual Inventory App',year:'2024',
+   ytId:'--o5lI6yiFs',
+   stack:['React-Native','FastAPI','Gemini Vision','Supabase','Bhashini'],
+   desc:'Inventory management for local shopkeepers with voice commands across 5 Indian languages, image-based product detection via Gemini Vision, and real-time cloud sync. Built to serve the 63M micro-retailers in India who lack English-language tooling. Won Bhashini-Sprint organised by the Government of India.',
+   link:'https://github.com/parthathalye17/Hisab-book-app'},
+];
+
+const EXPERIENCE=[
+  {co:'Machine Vision AI',role:'Software Developer Intern',
+   discipline:'Full-Stack · Computer Vision · ML (YOLO)',
+   period:'Feb 2026 – Present',loc:'Sydney, AU',
+   bullets:[
+     'Fine-tuned YOLO Safety Zone model across 6 vehicle classes — detection accuracy +38%, false alerts −45% in live industrial environments.',
+     'Replaced manual SharePoint-to-spreadsheet workflow with a Next.js + FastAPI platform, cutting ~4 hrs/day of operator entry across 100+ daily truck events.',
+   ]},
+  {co:'Deloitte',role:'ML Engineer Intern',
+   discipline:'Vector Search · Semantic Retrieval · RAG · Azure AI',
+   period:'Jan – May 2025',loc:'IN',
+   bullets:[
+     'Semantic search platform on Azure OpenAI + AI Search with real-time ingestion via Azure Functions — 30% accuracy gain over keyword baseline.',
+     'Secured end-to-end with OIDC, MSAL, JWT/JWKS, and RBAC across an enterprise document corpus.',
+   ]},
+  {co:'Edgelytics Solutions',role:'R&D Intern',
+   discipline:'ML Research · Signal Processing',
+   period:'Oct – Dec 2025',loc:'IN',
+   bullets:[
+     'Vibration-based condition monitoring of rotating machines via multi-axis FFT — early-stage fault identification without hardware sensors.',
+     'Ensemble learning model for predictive maintenance — 93.1% fault detection accuracy across multiple failure modes.',
+   ]},
+];
+
+const CONTACT_FIELDS=[
+  {label:'Email',value:'athalyeparth@gmail.com',href:'mailto:athalyeparth@gmail.com'},
+  {label:'GitHub',value:'/parthathalye17',href:'https://github.com/parthathalye17'},
+  {label:'Phone',value:'+61 433 254 007',href:'tel:+61433254007'},
+  {label:'LinkedIn',value:'linkedin.com/in/parthathalye',href:'https://linkedin.com/in/parthathalye'},
+  {label:'Location',value:'Sydney, AU · Open to relocation',href:null},
+  {label:'Résumé',value:'View PDF ↗',href:'https://drive.google.com/file/d/1_PLACEHOLDER_/view',download:true,accent:true},
+];
+
+/* ── NAV ── */
+function Nav({onNav}){
+  const[sc,setSc]=useState(false);
+  useEffect(()=>{
+    const h=()=>setSc(window.scrollY>70);
+    window.addEventListener('scroll',h,{passive:true});return()=>window.removeEventListener('scroll',h);
+  },[]);
+  const lk={background:'none',border:'none',fontFamily:"'Barlow',sans-serif",fontSize:13,fontWeight:600,letterSpacing:'0.13px',color:'rgba(255,255,255,0.38)',transition:'color 200ms',padding:0,cursor:'none'};
+  return(
+    <header style={{position:'fixed',top:0,left:0,right:0,zIndex:300,height:56,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 52px',
+      background:sc?'rgba(0,0,0,0.95)':'transparent',backdropFilter:sc?'blur(14px)':'none',
+      borderBottom:sc?'1px solid rgba(255,255,255,0.05)':'none',transition:'all 380ms ease'}}>
+      {/* Wordmark — no initials, just the nav links + contact */}
+      <div style={{width:40}}/>
+      <nav style={{display:'flex',alignItems:'center',gap:44}}>
+        {['About','Experience','Projects'].map(l=>(
+          <button key={l} data-h="true" onClick={()=>onNav(l.toLowerCase())} style={lk}
+            onMouseEnter={e=>e.currentTarget.style.color='#fff'}
+            onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.38)'}>
+            {l}
+          </button>
+        ))}
+        <a href="mailto:athalyeparth@gmail.com" data-h="true"
+          style={{fontFamily:"'Barlow',sans-serif",fontSize:13,fontWeight:600,color:'rgba(255,255,255,0.82)',borderBottom:'1px solid rgba(255,255,255,0.26)',paddingBottom:2,transition:'border-color 200ms'}}
+          onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.7)'}
+          onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(255,255,255,0.26)'}>
+          Say hello
+        </a>
+      </nav>
+    </header>
+  );
+}
+
+/* ── 3D SPHERE CANVAS ── */
+function SphereCanvas(){
+  const canvasRef=useRef(null);
+  useEffect(()=>{
+    const canvas=canvasRef.current;
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    let W,H,raf;
+    function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+    resize();
+    window.addEventListener('resize',resize,{passive:true});
+    const N=260;
+    const pts=[];
+    const PHI=Math.PI*(1+Math.sqrt(5));
+    for(let i=0;i<N;i++){
+      const phi=Math.acos(1-2*(i+0.5)/N);
+      const theta=PHI*i;
+      pts.push({ox:Math.sin(phi)*Math.cos(theta),oy:Math.cos(phi),oz:Math.sin(phi)*Math.sin(theta)});
+    }
+    let mX=0,mY=0,tmX=0,tmY=0;
+    function onMove(e){mX=(e.clientX/window.innerWidth-.5)*.18;mY=(e.clientY/window.innerHeight-.5)*.12;}
+    window.addEventListener('mousemove',onMove,{passive:true});
+    let rotY=0;
+    const BASE_X=0.28;
+    function render(){
+      W=canvas.width;H=canvas.height;
+      const r=Math.min(W,H)*0.72;
+      ctx.clearRect(0,0,W,H);
+      rotY+=0.0012;
+      tmX+=(mX-tmX)*.02;tmY+=(mY-tmY)*.02;
+      const rX=BASE_X+tmY,rY=rotY+tmX;
+      const cosY=Math.cos(rY),sinY=Math.sin(rY),cosX=Math.cos(rX),sinX=Math.sin(rX);
+      const FOV=W*0.9,cx=W/2,cy=H/2;
+      const proj=pts.map(p=>{
+        const x1=p.ox*cosY+p.oz*sinY,z1=-p.ox*sinY+p.oz*cosY;
+        const y2=p.oy*cosX-z1*sinX,z2=p.oy*sinX+z1*cosX;
+        const scale=FOV/(z2*r+FOV+r*0.5);
+        return{sx:x1*r*scale+cx,sy:y2*r*scale+cy,z:z2,sc:scale};
+      });
+      proj.sort((a,b)=>a.z-b.z);
+      const THRESH=r*0.22,THRESH2=THRESH*THRESH;
+      for(let i=0;i<proj.length;i++){
+        for(let j=i+1;j<proj.length;j++){
+          const dx=proj[i].sx-proj[j].sx,dy=proj[i].sy-proj[j].sy,d2=dx*dx+dy*dy;
+          if(d2<THRESH2){
+            const t=1-Math.sqrt(d2)/THRESH;
+            const avgZ=(proj[i].z+proj[j].z)*0.5,depthFade=(avgZ+1)*0.5;
+            const alpha=t*t*(0.04+depthFade*0.045);
+            ctx.strokeStyle=`rgba(255,255,255,${alpha.toFixed(3)})`;
+            ctx.lineWidth=0.6;
+            ctx.beginPath();ctx.moveTo(proj[i].sx,proj[i].sy);ctx.lineTo(proj[j].sx,proj[j].sy);ctx.stroke();
+          }
+        }
+      }
+      proj.forEach(p=>{
+        const depthFade=(p.z+1)*0.5;
+        const alpha=0.05+depthFade*0.12,size=0.6+depthFade*1.6;
+        ctx.fillStyle=`rgba(255,255,255,${alpha.toFixed(3)})`;
+        ctx.beginPath();ctx.arc(p.sx,p.sy,size,0,Math.PI*2);ctx.fill();
+      });
+      raf=requestAnimationFrame(render);
+    }
+    render();
+    return()=>{window.removeEventListener('resize',resize);window.removeEventListener('mousemove',onMove);cancelAnimationFrame(raf);};
+  },[]);
+  return(
+    <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:1,display:'block'}}/>
+  );
+}
+
+/* ── HERO ── */
+function Hero(){
+  const[rdy,setRdy]=useState(false);
+  const cRef=useRef(null);
+  const mRef=useRef({x:0,y:0,tx:0,ty:0,raf:null});
+  useEffect(()=>{const t=setTimeout(()=>setRdy(true),180);return()=>clearTimeout(t);},[]);
+  useEffect(()=>{
+    const m=mRef.current;
+    function onMove(e){m.x=(e.clientX/window.innerWidth-.5)*8;m.y=(e.clientY/window.innerHeight-.5)*5;}
+    function tick(){m.tx+=(m.x-m.tx)*.055;m.ty+=(m.y-m.ty)*.055;if(cRef.current)cRef.current.style.transform=`perspective(1400px) rotateY(${m.tx}deg) rotateX(${-m.ty}deg)`;m.raf=requestAnimationFrame(tick);}
+    window.addEventListener('mousemove',onMove,{passive:true});tick();
+    return()=>{window.removeEventListener('mousemove',onMove);cancelAnimationFrame(m.raf)};
+  },[]);
+  return(
+    <section id="hero" style={{minHeight:'100vh',display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'0 52px 64px',background:'#000',position:'relative',overflow:'hidden'}}>
+      <SphereCanvas/>
+      <div ref={cRef} style={{position:'relative',zIndex:2,willChange:'transform'}}>
+        <div style={{perspective:'900px',marginBottom:26}}>
+          {['PARTH','ATHALYE'].map((line,li)=>(
+            <div key={line} style={{overflow:'hidden',lineHeight:.92}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:'clamp(64px,9.5vw,148px)',fontWeight:800,letterSpacing:'-0.025em',color:'#fff',display:'block',
+                animation:rdy?`letterIn 1000ms ${220+li*220}ms cubic-bezier(0.22,1,0.36,1) both`:'none'}}>{line}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:28,flexWrap:'wrap',borderTop:'1px solid rgba(255,255,255,0.1)',paddingTop:18,animation:rdy?'fadeUp 800ms 740ms both':'none'}}>
+          <span style={{fontFamily:"'Barlow',sans-serif",fontSize:15,fontWeight:500,color:'rgba(255,255,255,0.6)',letterSpacing:'0.02em'}}>AI Engineer</span>
+          <span style={{color:'rgba(255,255,255,0.18)',fontSize:12}}>·</span>
+          <span style={{fontFamily:"'Barlow',sans-serif",fontSize:15,fontWeight:500,color:'rgba(255,255,255,0.6)',letterSpacing:'0.02em'}}>Full Stack Developer</span>
+        </div>
+      </div>
+      <div style={{position:'absolute',bottom:24,right:52,display:'flex',alignItems:'center',gap:10,animation:rdy?'fadeUp 800ms 1100ms both':'none'}}>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'1.5px',textTransform:'uppercase',color:'rgba(255,255,255,0.22)'}}>Scroll</span>
+        <div style={{width:1,height:26,background:'rgba(255,255,255,0.15)',animation:'lineDrop 800ms 1300ms both'}}/>
+      </div>
+    </section>
+  );
+}
+
+/* ── ABOUT — black ── */
+function About(){
+  const SKILLS=['Python','FastAPI','Next.JS','React','LangGraph','TensorFlow','Azure AI','Docker','GCP','Supabase','YOLO','RAG','CrewAI','SQL','React-Native','MongoDB'];
+  const[hovS,setHovS]=useState(null);
+  return(
+    <section id="about" style={{background:'#000',padding:'104px 52px 112px'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <span className="rv" style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.2)',display:'block',marginBottom:48}}>About</span>
+        <div style={{display:'grid',gridTemplateColumns:'6fr 5fr',gap:80,alignItems:'start'}}>
+          <div>
+            <p className="rv" style={{fontFamily:"'Barlow',sans-serif",fontSize:20,fontWeight:300,color:'rgba(255,255,255,0.62)',lineHeight:1.82,marginBottom:18}}>
+              I'm Parth, an AI engineer who cares about the craft. Whether it's a RAG pipeline indexing enterprise documents or a React-Native app for a corner-shop owner in India, I build systems that hold up at every layer of the stack.
+            </p>
+            <p className="rv d1" style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:300,color:'rgba(255,255,255,0.3)',lineHeight:1.88}}>
+              Currently pursuing a Masters in IT (AI) at UNSW Sydney. Previously at Deloitte building semantic search on Azure, and at Edgelytics doing predictive maintenance research. Finalist at seven national and one international hackathon — including Cambridge EduX at Microsoft Sydney and Bhashini-Sprint by the Government of India.
+            </p>
+          </div>
+          <div className="rv d1">
+            <div style={{marginBottom:14}}>
+              <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.18)',display:'block'}}>Technologies</span>
+            </div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:28}}>
+              {SKILLS.map(s=>(
+                <span key={s} data-h="true"
+                  onMouseEnter={()=>setHovS(s)} onMouseLeave={()=>setHovS(null)}
+                  style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'.5px',padding:'5px 10px',
+                    borderRadius:'var(--r)',cursor:'default',
+                    border:`1px solid ${hovS===s?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.09)'}`,
+                    color:hovS===s?'rgba(255,255,255,0.72)':'rgba(255,255,255,0.35)',
+                    transition:'all 200ms'}}>
+                  {s}
+                </span>
+              ))}
+            </div>
+            <div style={{paddingTop:22,borderTop:'1px solid rgba(255,255,255,0.07)'}}>
+              <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.18)',display:'block',marginBottom:14}}>Education</span>
+              {[
+                {school:'UNSW Sydney',deg:'M.IT (Artificial Intelligence)',year:'2026 –'},
+                {school:'RAIT Mumbai',deg:'B.Tech Electronics & Communication, 8.92 CGPA',year:'2021 – 25'},
+              ].map(({school,deg,year})=>(
+                <div key={school} style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:10}}>
+                  <div>
+                    <span style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:500,color:'rgba(255,255,255,0.55)',display:'block'}}>{school}</span>
+                    <span style={{fontFamily:"'Barlow',sans-serif",fontSize:12,fontWeight:300,color:'rgba(255,255,255,0.28)'}}>{deg}</span>
+                  </div>
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'rgba(255,255,255,0.2)',whiteSpace:'nowrap',marginLeft:12}}>{year}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── EXPERIENCE — white ── */
+function ExpRow({e,i}){
+  const[open,setOpen]=useState(false);
+  const[hov,setHov]=useState(false);
+  return(
+    <div className={`rv d${i+1}`} data-h="true"
+      onClick={()=>setOpen(o=>!o)} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{borderTop:`1px solid ${hov?'#ccc':'#ebebeb'}`,padding:`${open?28:22}px 0`,
+        transition:'padding 300ms var(--ease),border-color 200ms',cursor:'pointer'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr auto',gap:24,alignItems:'start'}}>
+        <div>
+          <div style={{display:'flex',alignItems:'flex-start',flexDirection:'column',marginBottom:6}}>
+            <div style={{display:'flex',alignItems:'baseline',gap:12,flexWrap:'wrap'}}>
+              <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:22,fontWeight:700,
+                color:hov?'#000':'#181818',letterSpacing:'-0.01em',transition:'color 200ms'}}>{e.co}</span>
+              <span style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:500,color:'#444'}}>{e.role}</span>
+            </div>
+            <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'1px',textTransform:'uppercase',
+              color:'#999',marginTop:5}}>{e.discipline}</span>
+          </div>
+          {open&&(
+            <ul style={{marginTop:14,listStyle:'none',display:'flex',flexDirection:'column',gap:9,animation:'slideDown 340ms var(--ease) both'}}>
+              {e.bullets.map((b,bi)=>(
+                <li key={bi} style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+                  <span style={{color:'#bbb',marginTop:7,fontSize:4,flexShrink:0}}>●</span>
+                  <span style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:400,color:'#2a2a2a',lineHeight:1.78}}>{b}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div style={{textAlign:'right',paddingTop:2}}>
+          <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'#8f8f8f',letterSpacing:'.5px',marginBottom:4}}>{e.period}</div>
+          <div style={{fontFamily:"'Barlow',sans-serif",fontSize:13,fontWeight:600,color:'#333',letterSpacing:'0.02em'}}>{e.loc}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Experience(){
+  return(
+    <section id="experience" style={{background:'#fff',padding:'104px 52px 112px'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <span className="rv" style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'#8f8f8f',display:'block',marginBottom:48}}>
+          Experience
+        </span>
+        {EXPERIENCE.map((e,i)=><ExpRow key={e.co} e={e} i={i}/>)}
+        <div style={{borderTop:'1px solid #ebebeb'}}/>
+      </div>
+    </section>
+  );
+}
+
+/* ── PROJECTS — black ── */
+function ProjectRow({p}){
+  const[open,setOpen]=useState(false);
+  const[hov,setHov]=useState(false);
+  const rowRef=useRef(null);
+  function onMove(e){
+    if(!rowRef.current)return;
+    const r=rowRef.current.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*2,y=((e.clientY-r.top)/r.height-.5)*2;
+    rowRef.current.style.transform=`perspective(1100px) rotateY(${x*3}deg) rotateX(${-y*1.5}deg)`;
+    rowRef.current.style.transition='transform 80ms linear';
+  }
+  function onLeave(){
+    setHov(false);if(!rowRef.current)return;
+    rowRef.current.style.transform='perspective(1100px) rotateY(0) rotateX(0)';
+    rowRef.current.style.transition='transform 800ms cubic-bezier(0.34,1.56,0.64,1)';
+  }
+  const thumbUrl=`https://img.youtube.com/vi/${p.ytId}/mqdefault.jpg`;
+  return(
+    <div ref={rowRef} data-h="true" onClick={()=>setOpen(o=>!o)}
+      onMouseMove={onMove} onMouseLeave={onLeave} onMouseEnter={()=>setHov(true)}
+      style={{borderTop:`1px solid ${hov?'rgba(255,255,255,0.14)':'rgba(255,255,255,0.07)'}`,
+        padding:`${open?30:20}px 0`,transition:'padding 320ms var(--ease),border-color 200ms',
+        willChange:'transform',cursor:'pointer'}}>
+      <div style={{display:'grid',gridTemplateColumns:'48px 1fr 60px 24px',gap:20,alignItems:'start'}}>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:11,letterSpacing:'.5px',paddingTop:4,
+          color:hov?'rgba(255,255,255,0.35)':'rgba(255,255,255,0.14)',transition:'color 200ms'}}>{p.n}</span>
+        <div>
+          <div style={{marginBottom:3}}>
+            <span style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:'clamp(20px,2.4vw,28px)',fontWeight:700,
+              letterSpacing:'-0.01em',color:hov?'#fff':'rgba(255,255,255,0.88)',transition:'color 200ms',
+              display:'block',lineHeight:1.1}}>{p.title}</span>
+            <span style={{fontFamily:"'Barlow',sans-serif",fontSize:13,fontWeight:300,
+              color:'rgba(255,255,255,0.26)',display:'block',marginTop:3}}>{p.sub}</span>
+          </div>
+          {open&&(
+            <div style={{marginTop:16,animation:'slideDown 360ms var(--ease) both'}}>
+              {/* YouTube thumbnail */}
+              <div style={{marginBottom:16,position:'relative',display:'inline-block',cursor:'pointer'}}
+                onClick={e=>{e.stopPropagation();openVideo(p.ytId);}}>
+                <img src={thumbUrl} alt={p.title+' demo'}
+                  style={{width:240,height:135,objectFit:'cover',borderRadius:2,display:'block',border:'1px solid rgba(255,255,255,0.1)'}}/>
+                <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',
+                  background:'rgba(0,0,0,0.35)',borderRadius:2,transition:'background 200ms'}}
+                  onMouseEnter={e=>e.currentTarget.style.background='rgba(0,0,0,0.18)'}
+                  onMouseLeave={e=>e.currentTarget.style.background='rgba(0,0,0,0.35)'}>
+                  <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                    <circle cx="18" cy="18" r="17" stroke="rgba(255,255,255,0.7)" strokeWidth="1.2"/>
+                    <path d="M15 12.5l9 5.5-9 5.5V12.5z" fill="#fff"/>
+                  </svg>
+                </div>
+              </div>
+              <p style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:300,color:'rgba(255,255,255,0.42)',lineHeight:1.82,maxWidth:600,marginBottom:16}}>{p.desc}</p>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:16}}>
+                {p.stack.map(t=>(
+                  <span key={t} style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'.5px',padding:'4px 10px',border:'1px solid rgba(255,255,255,0.13)',borderRadius:'var(--r)',color:'rgba(255,255,255,0.38)'}}>{t}</span>
+                ))}
+              </div>
+              <a href={p.link} target="_blank" data-h="true" onClick={e=>e.stopPropagation()}
+                style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.38)',borderBottom:'1px solid rgba(255,255,255,0.16)',paddingBottom:2,transition:'color 200ms,border-color 200ms'}}
+                onMouseEnter={e=>{e.currentTarget.style.color='#fff';e.currentTarget.style.borderColor='rgba(255,255,255,0.55)'}}
+                onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.38)';e.currentTarget.style.borderColor='rgba(255,255,255,0.16)'}}>
+                View Repository ↗
+              </a>
+            </div>
+          )}
+        </div>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'rgba(255,255,255,0.18)',textAlign:'right',paddingTop:4}}>{p.year}</span>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{color:'rgba(255,255,255,0.2)',transform:hov?'translate(2px,-2px)':'none',transition:'transform 260ms cubic-bezier(0.34,1.56,0.64,1)',marginTop:4}}>
+          <path d="M3 13L13 3M13 3H6M13 3V10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function Projects(){
+  return(
+    <section id="projects" style={{background:'#000',padding:'104px 52px 112px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <div className="rv" style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:48}}>
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.2)'}}>Projects</span>
+          <a href="https://github.com/parthathalye17" target="_blank" data-h="true"
+            style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.16)',borderBottom:'1px solid rgba(255,255,255,0.09)',paddingBottom:2,transition:'color 200ms,border-color 200ms'}}
+            onMouseEnter={e=>{e.currentTarget.style.color='rgba(255,255,255,0.5)';e.currentTarget.style.borderColor='rgba(255,255,255,0.32)'}}
+            onMouseLeave={e=>{e.currentTarget.style.color='rgba(255,255,255,0.16)';e.currentTarget.style.borderColor='rgba(255,255,255,0.09)'}}>
+            All Repos ↗
+          </a>
+        </div>
+        {PROJECTS.map((p,i)=>(
+          <div key={p.n} className={`rv d${i+1}`}><ProjectRow p={p}/></div>
+        ))}
+        <div style={{borderTop:'1px solid rgba(255,255,255,0.07)'}}/>
+      </div>
+    </section>
+  );
+}
+
+/* ── CONTACT ── */
+function Contact(){
+  return(
+    <footer id="contact" style={{background:'var(--f-ds)',padding:'80px 52px 56px'}}>
+      <div style={{maxWidth:1100,margin:'0 auto'}}>
+        <div className="rv" style={{marginBottom:48}}>
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'#8f8f8f',display:'block',marginBottom:16}}>Get in Touch</span>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:24}}>
+            <h2 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:'clamp(28px,4vw,58px)',fontWeight:700,letterSpacing:'-0.025em',color:'rgba(255,255,255,0.82)',lineHeight:1}}>
+              Let's build something.
+            </h2>
+            <a href="mailto:athalyeparth@gmail.com" data-h="true"
+              style={{background:'var(--f-red)',color:'#fff',fontFamily:"'Barlow',sans-serif",fontSize:16,fontWeight:400,
+                letterSpacing:'1.28px',padding:'12px 28px',borderRadius:'var(--r)',display:'inline-block',
+                transition:'background 200ms',whiteSpace:'nowrap'}}
+              onMouseEnter={e=>e.currentTarget.style.background='var(--f-red-d)'}
+              onMouseLeave={e=>e.currentTarget.style.background='var(--f-red)'}>
+              Send Message
+            </a>
+          </div>
+        </div>
+        <div className="rv d1" style={{borderTop:'1px solid rgba(255,255,255,0.07)',paddingTop:32,
+          display:'grid',gridTemplateColumns:'1fr 1fr',gap:0}}>
+          {CONTACT_FIELDS.map((f,i)=>{
+            const isRight=i%2===1;
+            const inner=(
+              <div style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',padding:'16px 0',
+                borderBottom:'1px solid rgba(255,255,255,0.06)',
+                borderLeft:isRight?'1px solid rgba(255,255,255,0.06)':'none',
+                paddingLeft:isRight?32:0,paddingRight:isRight?0:32}}>
+                <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'1px',textTransform:'uppercase',color:'#666'}}>{f.label}</span>
+                <span style={{fontFamily:"'Barlow',sans-serif",fontSize:14,fontWeight:400,
+                  color:f.accent?'rgba(218,41,28,0.85)':'rgba(255,255,255,0.62)',transition:'color 200ms'}}
+                  onMouseEnter={f.href?e=>e.currentTarget.style.color='#fff':undefined}
+                  onMouseLeave={f.href?e=>e.currentTarget.style.color=f.accent?'rgba(218,41,28,0.85)':'rgba(255,255,255,0.62)':undefined}>
+                  {f.value}
+                </span>
+              </div>
+            );
+            return f.href?(
+              <a key={f.label} href={f.href} target={f.download?'_blank':undefined} data-h="true"
+                style={{display:'block',textDecoration:'none',color:'inherit',cursor:'none'}}>
+                {inner}
+              </a>
+            ):(
+              <div key={f.label}>{inner}</div>
+            );
+          })}
+        </div>
+        <div style={{marginTop:40,paddingTop:20,borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'1.5px',textTransform:'uppercase',color:'rgba(255,255,255,0.18)'}}>Parth Athalye</span>
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'1px',textTransform:'uppercase',color:'rgba(255,255,255,0.14)'}}>© 2026</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ── APP ── */
+function App(){
+  function goTo(id){
+    if(id==='hero'){window.scrollTo({top:0,behavior:'smooth'});return;}
+    const el=document.getElementById(id);
+    if(el){const top=el.getBoundingClientRect().top+window.scrollY-56;window.scrollTo({top,behavior:'smooth'});}
+  }
+  return(
+    <div>
+      <Nav onNav={goTo}/>
+      <Hero/>
+      <About/>
+      <Experience/>
+      <Projects/>
+      <Contact/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
