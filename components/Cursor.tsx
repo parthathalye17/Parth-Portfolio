@@ -9,17 +9,19 @@ export default function Cursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const ring = useRef({ x: 0, y: 0 });
   const raf = useRef<number>(0);
-  const [visible, setVisible] = useState(false);
+  const [show, setShow] = useState(false);
 
+  // Effect 1: detect pointer capability — skip entirely on touch/tablet
   useEffect(() => {
-    // Hide cursor on touch-only devices
-    if (window.matchMedia('(hover: none)').matches) return;
+    if (!window.matchMedia('(hover: none)').matches) setShow(true);
+  }, []);
 
+  // Effect 2: attach listeners once show=true and refs are populated
+  useEffect(() => {
+    if (!show) return;
     const dot = dotRef.current;
     const ringEl = ringRef.current;
     if (!dot || !ringEl) return;
-
-    setVisible(true);
 
     const onMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
@@ -37,7 +39,6 @@ export default function Cursor() {
     };
 
     const onEnter = (e: MouseEvent) => {
-      // e.target can be a text node or SVG internals — guard before calling .closest()
       const el = e.target;
       if (!(el instanceof Element)) return;
       if (el.closest('[data-hover]')) {
@@ -66,9 +67,9 @@ export default function Cursor() {
       document.removeEventListener('mouseleave', onLeave, { capture: true });
       cancelAnimationFrame(raf.current);
     };
-  }, []);
+  }, [show]);
 
-  if (!visible) return null;
+  if (!show) return null;
 
   return (
     <>
