@@ -3,7 +3,9 @@ export interface Project {
   sub: string;
   year: string;
   ytId: string;
+  phase: string;
   stack: string[];
+  summary: string;
   desc: string;
   link: string;
 }
@@ -14,6 +16,8 @@ export interface Experience {
   discipline: string;
   period: string;
   loc: string;
+  phase: string;
+  summary: string;
   desc: string;
 }
 
@@ -31,7 +35,9 @@ export const PROJECTS: Project[] = [
     sub: 'AI Curriculum Platform · Cambridge EduX × Microsoft',
     year: '2026',
     ytId: '71IxVj20-i0',
-    stack: ['FastAPI', 'Next.JS', 'Supabase', 'Gemini API', 'Mapbox'],
+    phase: 'Compare · Generate · Improve',
+    stack: ['Next.js', 'FastAPI', 'Supabase', 'CurricuLLM', 'Gemini', 'Mapbox', 'Serper'],
+    summary: 'Professors can describe a course, generate a baseline curriculum, compare it with live course material from universities around the world, and turn the final structure into lectures, quizzes, forums, and feedback-led follow-ups.',
     desc: 'Full-stack AI platform enabling professors to benchmark curricula live against peer institutions, auto-generate post-lecture quizzes, and close feedback loops between student confusion and next-lecture content. Built as a finalist at the Cambridge EduX Hackathon at Microsoft Sydney HQ — competing against teams from across APAC. Reduced curriculum build time by 97% (68 hrs → 2 hrs) and quiz generation by 120×. Architecture targets 242M students across 27,400 institutions, mirroring feedback-loop pilots at ASU and U of T that showed 19% → 8% dropout reduction.',
     link: 'https://github.com/sirasatinithyanand/TechMap--The-teachers-ai-guide',
   },
@@ -40,7 +46,9 @@ export const PROJECTS: Project[] = [
     sub: 'Lead Generation Platform',
     year: '2024',
     ytId: 'RyBxjDp6300',
-    stack: ['LangGraph', 'Gemini', 'Serper', 'FastAPI', 'NextJS'],
+    phase: 'Discover · Score · Engage',
+    stack: ['OpenAI Agents SDK', 'Gemini 2.0 Flash', 'Serper', 'FastAPI', 'AsyncIO'],
+    summary: 'A multi-agent workflow that creates market-specific searches, discovers potential companies, scores them across five business criteria, finds relevant contacts, and prepares tailored outreach strategies.',
     desc: 'Multi-agent AI pipeline that eliminates B2B prospecting overhead — from hours of manual research to under 3 minutes per run. Autonomously discovers, scores, and follows up with 10+ qualified leads per run, replacing manual LinkedIn search, email drafting, and CRM entry entirely.',
     link: 'https://github.com/parthathalye17/Lead-Generation-Platform',
   },
@@ -49,7 +57,9 @@ export const PROJECTS: Project[] = [
     sub: 'Multilingual Inventory App',
     year: '2024',
     ytId: '--o5lI6yiFs',
-    stack: ['React-Native', 'FastAPI', 'Gemini Vision', 'Supabase', 'Bhashini'],
+    phase: 'Speak · See · Manage',
+    stack: ['React Native', 'Expo', 'FastAPI', 'Gemini Vision', 'Supabase', 'Bhashini'],
+    summary: 'A mobile inventory system built around voice and camera input. Shopkeepers can manage stock in their preferred Indian language, identify products from photos, and monitor inventory through a simple dashboard.',
     desc: 'Inventory management app for local shopkeepers with voice commands across 5 Indian languages, image-based product detection via Gemini Vision, and real-time cloud sync — built to serve the 63M micro-retailers in India who lack English-language tooling. Reached the finals of Bhashini-Sprint by the Government of India ONDC, competing against funded startups in the multilingual commerce category.',
     link: 'https://github.com/parthathalye17/Hisab-book-app',
   },
@@ -62,7 +72,9 @@ export const EXPERIENCE: Experience[] = [
     discipline: 'Full-Stack · Computer Vision · ML (YOLO)',
     period: 'Feb 2026 – Present',
     loc: 'Sydney, AU',
-    desc: 'Built a single-camera CCTV analytics system for a container-deposit recycling store using YOLO-based person detection and BoT-SORT tracking (with ReID), generating queue wait times and per-machine dwell metrics (avg/max/min) through zone-based tracking — enabling data-driven decisions on store layout and throughput. Improved worker proximity detection accuracy by 38% and reduced false alerts by 45% by fine-tuning a YOLO Safety Zone model across 6 vehicle classes. Replaced a manual SharePoint-to-spreadsheet workflow with a Next.js + FastAPI platform, eliminating ~4 hrs/day of manual entry, reducing misclassification risk by 60%, and automating revenue calculations across 100+ daily truck events via a verified data pipeline.',
+    phase: 'Observe · Validate · Operationalise',
+    summary: 'I build the data, model, and application layers behind production computer-vision workflows, turning raw CCTV evidence into validated operational and revenue records.',
+    desc: 'Converted high-volume dual-camera CCTV archives into model-ready data by isolating meaningful vehicle and personnel activity, retaining ±60 seconds of context, and removing near-duplicate frames to maximise dataset diversity. Fine-tuned an 8-class YOLO11m-seg model on AWS SageMaker to 90.7% precision and 0.81 mask mAP@50, then productionised it with cross-camera validation and fail-safe controls; related safety-zone optimisation reduced alerts by 94% while running at 9.7 FPS. Replaced a fragmented SharePoint and spreadsheet process with a role-based Next.js and FastAPI platform, eliminating approximately four hours of manual work per day and reducing classification risk by 60%. Automated the evidence-to-revenue lifecycle for 100+ daily truck events through licence-plate recognition, tiered weighbridge reconciliation, reviewer-preserved records, and per-ton pricing on AWS EC2, RDS, and S3.',
   },
   {
     co: 'Deloitte',
@@ -70,6 +82,8 @@ export const EXPERIENCE: Experience[] = [
     discipline: 'Vector Search · Semantic Retrieval · RAG · Azure AI',
     period: 'Jan – May 2025',
     loc: 'Thane, IN',
+    phase: 'Index · Retrieve · Secure',
+    summary: 'I helped build an enterprise search product that could ingest changing document collections and retrieve information by meaning rather than exact wording.',
     desc: 'Built a semantic search platform on Azure OpenAI and Azure AI Search with a real-time document ingestion pipeline via Azure Functions, improving retrieval accuracy by 30% over keyword baseline across an enterprise document corpus. Hardened the platform end-to-end with OIDC, MSAL, JWT/JWKS, and RBAC — delivering production-grade security for a multi-tenant internal tool at a Big 4 firm.',
   },
   {
@@ -78,6 +92,8 @@ export const EXPERIENCE: Experience[] = [
     discipline: 'ML Research · Signal Processing · Predictive Maintenance',
     period: 'Oct – Dec 2025',
     loc: 'Pune, IN',
+    phase: 'Measure · Transform · Predict',
+    summary: 'I explored how vibration signals from industrial machines could reveal early faults, then turned those patterns into data a learning system could use.',
     desc: 'Analysed multi-axis vibration data from rotating industrial machines using FFT to extract key spectral features, enabling early-stage fault identification without additional sensor hardware. Built fault-mapped training datasets and deployed an ensemble learning model for predictive maintenance, achieving 93.1% fault detection accuracy across multiple machine failure modes.',
   },
 ];
